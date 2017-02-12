@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "D:\\androidstuidospace\\GiftSaying\\refreshlibrary\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable\\indicator_bg_top.xml",
+        "source": "D:\\androidstuidospace\\GiftSaying\\refreshlibrary\\build\\intermediates\\bundles\\debug\\res\\drawable\\indicator_bg_top.xml"
+    },
+    {
+        "merged": "D:\\androidstuidospace\\GiftSaying\\refreshlibrary\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable\\indicator_bg_bottom.xml",
+        "source": "D:\\androidstuidospace\\GiftSaying\\refreshlibrary\\build\\intermediates\\bundles\\debug\\res\\drawable\\indicator_bg_bottom.xml"
+    },
+    {
+        "merged": "D:\\androidstuidospace\\GiftSaying\\refreshlibrary\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable\\refresh_header_box_anim.xml",
+        "source": "D:\\androidstuidospace\\GiftSaying\\refreshlibrary\\build\\intermediates\\bundles\\debug\\res\\drawable\\refresh_header_box_anim.xml"
+    }
+]
