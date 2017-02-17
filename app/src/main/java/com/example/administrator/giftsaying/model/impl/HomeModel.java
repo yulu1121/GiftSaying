@@ -21,10 +21,10 @@ import rx.schedulers.Schedulers;
 
 public class HomeModel implements IHomeModel {
     @Override
-    public void getChoiceData(Context context,final SendChoiceData data) {
+    public void getChoiceData(Context context,final SendChoiceData data,int channel) {
         InitApplication application= (InitApplication) context.getApplicationContext();
         AppHttpService httpService = application.getRetrofit().create(AppHttpService.class);
-        httpService.getChoiceBean(101,2,1,2,20,0)
+        httpService.getChoiceBean(channel,2,1,2,20,0)
                     .map(new Func1<ChoiceBean, ChoiceBean>() {
                         @Override
                         public ChoiceBean call(ChoiceBean bean) {

@@ -1,6 +1,8 @@
 package com.example.administrator.giftsaying.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import com.example.administrator.giftsaying.R;
 import com.example.administrator.giftsaying.model.bean.ChoiceBean;
 import com.example.administrator.giftsaying.utils.CalendarUtils;
+import com.example.administrator.giftsaying.view.top.FirstChoiceActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -95,7 +98,19 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
         Object[] objects = choiceMap.keySet().toArray();
         String key = (String) objects[groupPosition];
         List<ChoiceBean.DataBean.ItemsBean> itemsList = choiceMap.get(key);
-        ChoiceBean.DataBean.ItemsBean itemsBean = itemsList.get(childPosition);
+        final ChoiceBean.DataBean.ItemsBean itemsBean = itemsList.get(childPosition);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                Intent intent = new Intent(context, FirstChoiceActivity.class);
+                bundle.putString("image",itemsBean.getCover_image_url());
+                bundle.putString("title",itemsBean.getTitle());
+                bundle.putString("content",itemsBean.getContent_url());
+                intent.putExtra("formation",bundle);
+                context.startActivity(intent);
+            }
+        });
         Picasso.with(context).load(itemsBean.getCover_image_url()).into(viewHolder.firstMainBack);
         viewHolder.firstMainTitle.setText(itemsBean.getTitle());
         viewHolder.firstMainClicks.setText(String.valueOf(itemsBean.getLikes_count()));

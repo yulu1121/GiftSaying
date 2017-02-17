@@ -14,7 +14,7 @@ public interface IHomeModel {
     /**
      *获取精选的数据
      */
-    void getChoiceData(Context context,SendChoiceData data);
+    void getChoiceData(Context context,SendChoiceData data,int channel);
     void getBannerData(Context context,SendChoiceData data);
     /**
      * 向prsenter传送数据的接口

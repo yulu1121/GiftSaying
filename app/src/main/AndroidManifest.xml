@@ -8,8 +8,17 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:name=".utils.InitApplication"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+         android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            >
+        </activity>
+        <activity android:name=".view.top.FirstChoiceActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            />
+        <activity android:name=".view.home.SplashActivity"
+            android:theme="@style/AplashTheme"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

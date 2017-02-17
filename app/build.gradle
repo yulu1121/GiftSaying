@@ -41,6 +41,7 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
     compile 'com.github.siyamed:android-shape-imageview:0.9.+@aar'
+    compile 'com.github.todou:appbarspring:1.0.3'
     compile project(':okhttp_tool')
     compile project(':refreshlibrary')
 }

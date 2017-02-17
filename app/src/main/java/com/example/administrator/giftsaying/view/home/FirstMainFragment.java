@@ -1,6 +1,7 @@
 package com.example.administrator.giftsaying.view.home;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,17 +10,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
+import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.example.administrator.giftsaying.R;
 import com.example.administrator.giftsaying.adapter.ExpandableAdapter;
 import com.example.administrator.giftsaying.dagger.DaggerHomeComponent;
 import com.example.administrator.giftsaying.dagger.HomeModule;
 import com.example.administrator.giftsaying.model.bean.BannerBean;
 import com.example.administrator.giftsaying.model.bean.ChoiceBean;
+import com.example.administrator.giftsaying.model.bean.HorizontalBean;
 import com.example.administrator.giftsaying.presenter.IHomePresenter;
+import com.example.administrator.giftsaying.presenter.IHorizontalPresenter;
+import com.example.administrator.giftsaying.presenter.impl.HorizontalPresenter;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshExpandableListView;
 import com.squareup.picasso.Picasso;
@@ -47,15 +54,19 @@ import rx.schedulers.Schedulers;
  * Created by Administrator on 2017/2/7.
  */
 
-public class FirstMainFragment extends Fragment implements IHomePresenter.SendChoiceResult {
+public class FirstMainFragment extends Fragment implements IHomePresenter.SendChoiceResult,IHorizontalPresenter.SendHorizontalResult{
     private Context context;
+    private int channel=101;
     private ExpandableAdapter adapter;//分组适配器
     private Map<String,List<ChoiceBean.DataBean.ItemsBean>> choiceMap = new LinkedHashMap<>();//存放ItemsBean的集合
     @BindView(R.id.first_main_expandable_ep)
     PullToRefreshExpandableListView expandableListView;//使用依赖注入创建的分组ListView
     @Inject
     IHomePresenter presenter;//使用dagger2创建的P层对象
+    IHorizontalPresenter horizontalPresenter;
     private ConvenientBanner convenientBanner;//广告轮播器
+    private LinearLayout liner;
+    private List<HorizontalBean.DataBean.SecondaryBannersBean> horizontalBeanList=new ArrayList<>();
     private List<BannerBean.DataBean.BannersBean> bannersBeanList = new ArrayList<>();//存放广播类的集合
     @Override
     public void onAttach(Context context) {
@@ -66,8 +77,10 @@ public class FirstMainFragment extends Fragment implements IHomePresenter.SendCh
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DaggerHomeComponent.builder().homeModule(new HomeModule(this,context)).build().inject(this);
+        DaggerHomeComponent.builder().homeModule(new HomeModule(this,context,channel)).build().inject(this);
+        horizontalPresenter = new HorizontalPresenter(context,this);
         presenter.getChoiceBeanResult();
+        horizontalPresenter.getHorizontalResult();
     }
 
     @Override
@@ -94,6 +107,7 @@ public class FirstMainFragment extends Fragment implements IHomePresenter.SendCh
         presenter.getBannerBeanResultl();
         initHeaderView();
         initExpandableList();
+        initLinear(horizontalBeanList);
         return view;
     }
 
@@ -105,10 +119,51 @@ public class FirstMainFragment extends Fragment implements IHomePresenter.SendCh
         HeaderViewHolder viewHolder = new HeaderViewHolder(view);
         expandableListView.getRefreshableView().addHeaderView(view);
         convenientBanner = viewHolder.banner;
+        liner = viewHolder.linearLayout;
     }
+    private void initLinear(List<HorizontalBean.DataBean.SecondaryBannersBean> horizontalBeanList) {
+        liner.setBackgroundColor(Color.WHITE);
+        final LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(100,100);
+        lp.setMargins(10,10,10,10);
+        Observable.from(horizontalBeanList)
+                .map(new Func1<HorizontalBean.DataBean.SecondaryBannersBean, String>() {
+                    @Override
+                    public String call(HorizontalBean.DataBean.SecondaryBannersBean secondaryBannersBean) {
+                        return secondaryBannersBean.getImage_url();
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        ImageView imageView = new ImageView(context);
+                        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                        Picasso.with(context).load(s).into(imageView);
+                        liner.addView(imageView,lp);
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        throwable.printStackTrace();
+                    }
+                }, new Action0() {
+                    @Override
+                    public void call() {
+                    }
+                });
+    }
+    @Override
+    public void sendHorizontalReasult(HorizontalBean bean) {
+        horizontalBeanList.addAll(bean.getData().getSecondary_banners());
+        initLinear(horizontalBeanList);
+    }
+
     class HeaderViewHolder{
         @BindView(R.id.first_main_heaer_cb)
         ConvenientBanner banner;
+        @BindView(R.id.first_main_ll)
+        LinearLayout linearLayout;
         HeaderViewHolder(View view){
             ButterKnife.bind(this,view);
         }
@@ -119,13 +174,27 @@ public class FirstMainFragment extends Fragment implements IHomePresenter.SendCh
     private void initExpandableList(){
         adapter = new ExpandableAdapter(choiceMap,context);
 //        expandableListView.getRefreshableView().setDivider(getResources().getDrawable(R.drawable.divider_height));
-        //expandableListView.getRefreshableView().setDividerHeight(DesityUtil.px2dip(context,30f));
+        expandableListView.getRefreshableView().setDividerHeight(0);
+        expandableListView.getRefreshableView().setGroupIndicator(null);
         expandableListView.getRefreshableView().setAdapter(adapter);
         expandableListView.setMode(PullToRefreshBase.Mode.BOTH);
         expandableListView.getRefreshableView().setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
                 return true;
+            }
+        });
+        expandableListView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ExpandableListView>() {
+            @Override
+            public void onPullDownToRefresh(PullToRefreshBase<ExpandableListView> refreshView) {
+                adapter.notifyDataSetChanged();
+                expandableListView.onRefreshComplete();
+            }
+
+            @Override
+            public void onPullUpToRefresh(PullToRefreshBase<ExpandableListView> refreshView) {
+                adapter.notifyDataSetChanged();
+                expandableListView.onRefreshComplete();
             }
         });
     }
@@ -164,17 +233,6 @@ public class FirstMainFragment extends Fragment implements IHomePresenter.SendCh
                         expandListView();
                     }
                 });
-//        for (int i = 0; i < items.size(); i++) {
-//            ChoiceBean.DataBean.ItemsBean itemsBean = items.get(i);
-//             long time= itemsBean.getCreated_at();
-//            String formatTime = formatTime(time);
-//            if(!choiceMap.containsKey(formatTime)){
-//                choiceMap.put(formatTime,new ArrayList<ChoiceBean.DataBean.ItemsBean>());
-//            }
-//            choiceMap.get(formatTime).add(itemsBean);
-//        }
-//            adapter.notifyDataSetChanged();
-//            expandListView();
     }
 
     /**
@@ -210,10 +268,16 @@ public class FirstMainFragment extends Fragment implements IHomePresenter.SendCh
         }
     }
     @Override
-    public void sendBannerBeanResult(BannerBean bannerBean) {
+    public void sendBannerBeanResult(final BannerBean bannerBean) {
         bannersBeanList.clear();
         bannersBeanList.addAll(bannerBean.getData().getBanners());
         setupBanner(convenientBanner);
+        convenientBanner.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Toast.makeText(context, ""+position, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     /**

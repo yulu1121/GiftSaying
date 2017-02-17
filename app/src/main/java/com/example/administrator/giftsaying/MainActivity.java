@@ -1,5 +1,6 @@
 package com.example.administrator.giftsaying;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -30,6 +31,8 @@ public class MainActivity extends AppCompatActivity implements ICategoryPresente
     private FragmentAdapter adapter;
     private List<String> mlist;
     private List<Fragment> fragmentList;
+    private List<Integer> channelId;
+    private ProgressDialog dialog;
     @Inject
     ICategoryPresenter presenter;
     private FirstMainFragment firstMainFragment=FirstMainFragment.newInstance();
@@ -37,16 +40,25 @@ public class MainActivity extends AppCompatActivity implements ICategoryPresente
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initDialog();
+        dialog.show();
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         DaggerAppComponent.builder().appModule(new AppModule(this,getApplicationContext())).build().inject(this);
         presenter.getCategoryResult();
     }
+    private void initDialog(){
+        dialog = new ProgressDialog(this);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setMax(100);
+        dialog.setMessage("正在加载中...");
+    }
     public void initFragments(){
         fragmentList = new ArrayList<>();
         fragmentList.add(firstMainFragment);
-        for (int i = 0; i < mlist.size()-1; i++) {
-            fragmentList.add(OtherFragment.newInstance("111"+i));
+        for (int i = 1; i < mlist.size(); i++) {
+            OtherFragment otherFragment = OtherFragment.newInstance(channelId.get(i));
+            fragmentList.add(otherFragment);
         }
     }
     private void initView(){
@@ -54,17 +66,19 @@ public class MainActivity extends AppCompatActivity implements ICategoryPresente
         adapter = new FragmentAdapter(getSupportFragmentManager(),fragmentList,mlist);
         mainViewPager.setAdapter(adapter);
         mainTabLayout.setupWithViewPager(mainViewPager);
+        dialog.dismiss();
     }
     @Override
     public void sendCategoryResult(TopCategoryBean bean) {
         mlist = new ArrayList<>();
+        channelId = new ArrayList<>();
         List<TopCategoryBean.DataBean.ChannelsBean> channels = bean.getData().getChannels();
         for (int i = 0; i < channels.size() ; i++) {
             mlist.add(channels.get(i).getName());
+            channelId.add(channels.get(i).getId());
         }
         initFragments();
         initView();
     }
-
 
 }

@@ -3,6 +3,7 @@ package com.example.administrator.giftsaying.utils;
 import com.example.administrator.giftsaying.constants.UrlConstants;
 import com.example.administrator.giftsaying.model.bean.BannerBean;
 import com.example.administrator.giftsaying.model.bean.ChoiceBean;
+import com.example.administrator.giftsaying.model.bean.HorizontalBean;
 import com.example.administrator.giftsaying.model.bean.TopCategoryBean;
 
 import retrofit2.http.GET;
@@ -27,4 +28,6 @@ public interface AppHttpService {
                                          @Query("offset") int offset);
     @GET(UrlConstants.BANNER_URL_TWO)
     Observable<BannerBean> getBannerBean();
+    @GET(UrlConstants.HORIZONTAL_URL)
+    Observable<HorizontalBean> getHorizontalBean();
 }

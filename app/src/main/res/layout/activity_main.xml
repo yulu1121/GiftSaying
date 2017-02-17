@@ -5,10 +5,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.administrator.giftsaying.MainActivity">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/main_item_toobar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:background="#ff2d47"
+        >
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@null"
+            android:id="@+id/main_login"
+            android:drawableStart="@drawable/btn_signin"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="礼物说"
+            android:textColor="#fff"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_gravity = "center"
+            />
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@null"
+            android:layout_gravity ="end"
+            android:paddingEnd="10dp"
+            android:drawableStart="@drawable/search"
+            />
+    </android.support.v7.widget.Toolbar>
     <android.support.design.widget.TabLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/main_tab_tl"
+        android:layout_below="@id/main_item_toobar"
         />
     <android.support.v4.view.ViewPager
         android:layout_width="match_parent"

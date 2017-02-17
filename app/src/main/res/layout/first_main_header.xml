@@ -3,7 +3,21 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
     <com.bigkoo.convenientbanner.ConvenientBanner
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="150dp"
         android:id="@+id/first_main_heaer_cb"
         />
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:layout_below="@id/first_main_heaer_cb"
+        >
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/first_main_ll"
+            android:orientation="horizontal"
+            >
+        </LinearLayout>
+    </HorizontalScrollView>
 </RelativeLayout>

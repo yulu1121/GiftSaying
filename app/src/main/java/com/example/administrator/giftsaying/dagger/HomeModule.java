@@ -18,10 +18,12 @@ import dagger.Provides;
 @Module
 public class HomeModule {
     private IHomePresenter.SendChoiceResult result;
+    private int channel;
     private Context context;
-    public HomeModule(IHomePresenter.SendChoiceResult result,Context context){
+    public HomeModule(IHomePresenter.SendChoiceResult result,Context context,int channel){
         this.result = result;
         this.context = context;
+        this.channel = channel;
     }
     @Provides
     public IHomeModel getHomeModel(){
@@ -29,6 +31,6 @@ public class HomeModule {
     }
     @Provides
     public IHomePresenter getHomepresnter(IHomeModel model){
-        return new HomePresenter(result,model,context);
+        return new HomePresenter(result,model,context,channel);
     }
 }
