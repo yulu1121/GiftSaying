@@ -1,11 +1,14 @@
 package com.example.administrator.giftsaying;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.RadioButton;
 
 import com.example.administrator.giftsaying.adapter.FragmentAdapter;
 import com.example.administrator.giftsaying.dagger.AppModule;
@@ -33,6 +36,9 @@ public class MainActivity extends AppCompatActivity implements ICategoryPresente
     private List<Fragment> fragmentList;
     private List<Integer> channelId;
     private ProgressDialog dialog;
+    //热门的radiobutton,added by yulu 2017年4月11日 19:54:37
+    @BindView(R.id.main_hot_rb)
+    RadioButton hot;
     @Inject
     ICategoryPresenter presenter;
     private FirstMainFragment firstMainFragment=FirstMainFragment.newInstance();
@@ -66,6 +72,14 @@ public class MainActivity extends AppCompatActivity implements ICategoryPresente
         adapter = new FragmentAdapter(getSupportFragmentManager(),fragmentList,mlist);
         mainViewPager.setAdapter(adapter);
         mainTabLayout.setupWithViewPager(mainViewPager);
+        //跳转到热门界面,added by yulu 2017年4月11日 19:56:47
+        hot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,HotActivity.class);
+                startActivity(intent);
+            }
+        });
         dialog.dismiss();
     }
     @Override

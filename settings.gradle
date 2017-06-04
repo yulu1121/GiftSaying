@@ -1,1 +1,1 @@
-include ':app', ':refreshlibrary', 'okhttp_tool'
+include ':app', ':refreshlibrary', ':fragmentnew', 'okhttp_tool'

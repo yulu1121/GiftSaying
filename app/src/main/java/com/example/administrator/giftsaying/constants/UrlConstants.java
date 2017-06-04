@@ -12,4 +12,5 @@ public class UrlConstants {
     public static final String BANNER_URL = COMMON_URL+"/v2/banners";
     public static final String BANNER_URL_TWO = "/v2/banners";
     public static final String HORIZONTAL_URL = "v2/secondary_banners?gender=1&generation=1";
+    public static final String HOT_URL = "v2/items?gender=1&limit=20&offset=0&generation=2";
 }
